@@ -47,7 +47,7 @@ test("server-renders the text loader gallery", async () => {
   assert.doesNotMatch(html, />Playground</);
   assert.match(html, />Docs</);
   assert.match(html, />GitHub</);
-  assert.match(html, />24k</);
+  assert.match(html, />30\.3k</);
   assert.doesNotMatch(html, />API</);
   assert.doesNotMatch(html, /Ideas arrive quietly/);
   assert.doesNotMatch(html, /Progress Narrative|Thinking steps|codex-preview|react-loading-skeleton/i);
