@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
-    "framer-motion": "^13.0.0",
+    "framer-motion": "^13.1.1",
     "generative-loaders": "workspace:*",
     "react": "19.2.8",
     "react-dom": "19.2.8"
