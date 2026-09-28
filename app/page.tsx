@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { BrandMark } from "./components/brand-mark";
 import { GitHubButton } from "./components/github-button";
+import { SponsorCTA } from "./components/sponsor-cta";
 
 const sampleText = "Ideas arrive quietly,\nthen become something clear.";
 
@@ -570,6 +571,7 @@ export default function Home() {
       />}
       </div>
     </div>
+    <SponsorCTA />
     <SiteFooter />
   </main>;
 }
