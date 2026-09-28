@@ -1,4 +1,5 @@
 import { GitHubButton } from "../components/github-button";
+import { SponsorCTA } from "../components/sponsor-cta";
 import { BrandMark } from "../components/brand-mark";
 import Link from "next/link";
 
@@ -162,6 +163,7 @@ export function StreamingAnswer() {
       </article>
     </div>
 
+    <SponsorCTA />
     <footer className="footer shell"><Link className="brand" href="/"><BrandMark />Generative Loaders</Link><p>MIT licensed · React 18+</p><a href="#top">Back to top ↑</a></footer>
   </main>;
 }
