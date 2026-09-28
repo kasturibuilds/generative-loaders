@@ -14,7 +14,7 @@ export default function DocsPage() {
   return <main className="docs-page" id="top">
     <nav className="nav shell docs-nav">
       <Link className="brand" href="/"><BrandMark />Generative Loaders</Link>
-      <div className="nav-links"><a href="#quick-start">Quick start</a><a href="#components">Components</a><a href="#accessibility">Accessibility</a><a href="https://github.com/sponsors/kasturikhanke">Sponsor ↗</a></div>
+      <div className="nav-links"><a href="#quick-start">Quick start</a><a href="#components">Components</a><a href="#accessibility">Accessibility</a><a href="https://github.com/sponsors/kasturibuilds">Sponsor ↗</a></div>
       <div className="nav-actions"><GitHubButton compact /><Link className="nav-install" href="/#contexts">Examples <span>↗</span></Link></div>
     </nav>
 
@@ -162,6 +162,6 @@ export function StreamingAnswer() {
       </article>
     </div>
 
-    <footer className="footer shell"><Link className="brand" href="/"><BrandMark />Generative Loaders</Link><p>MIT licensed · React 18+ · <a href="https://github.com/sponsors/kasturikhanke">Sponsor ↗</a></p><a href="#top">Back to top ↑</a></footer>
+    <footer className="footer shell"><Link className="brand" href="/"><BrandMark />Generative Loaders</Link><p>MIT licensed · React 18+ · <a href="https://github.com/sponsors/kasturibuilds">Sponsor ↗</a></p><a href="#top">Back to top ↑</a></footer>
   </main>;
 }
