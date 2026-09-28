@@ -1,17 +1,27 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
-import test from "node:test";
+import test, { after } from "node:test";
+import { readFileSync, readdirSync } from "node:fs";
+import { Miniflare, convertV4MiniflareOptions } from "miniflare";
+import { fileURLToPath } from "node:url";
+
+const serverRoot = fileURLToPath(new URL("../dist/server", import.meta.url));
+const modulePaths = ["index.js", ...readdirSync(serverRoot, { recursive: true }).filter(path => /\.m?js$/.test(path) && path !== "index.js")];
+const runtime = new Miniflare(convertV4MiniflareOptions({
+  name: "security-test",
+  routes: ["*/*"],
+  modules: modulePaths.map(path => ({ type: "ESModule", path: `${serverRoot}/${path}`, contents: readFileSync(`${serverRoot}/${path}`, "utf8") })),
+  modulesRoot: fileURLToPath(new URL("../dist/server", import.meta.url)),
+  compatibilityDate: "2026-09-26",
+  compatibilityFlags: ["nodejs_compat"],
+  cf: false,
+  assets: { directory: fileURLToPath(new URL("../dist/client", import.meta.url)), binding: "ASSETS" },
+  d1Databases: ["DB"],
+}));
+after(() => runtime.dispose());
 
 async function render(pathname = "/", origin = "http://localhost") {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request(`${origin}${pathname}`, { headers: { accept: "text/html" } }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
+  return runtime.dispatchFetch(`${origin}${pathname}`, { headers: { accept: "text/html" }, redirect: "manual" });
 }
 
 test("redirects the generated Sites hostname to the canonical domain", async () => {
@@ -47,7 +57,7 @@ test("server-renders the text loader gallery", async () => {
   assert.doesNotMatch(html, />Playground</);
   assert.match(html, />Docs</);
   assert.match(html, />GitHub</);
-  assert.match(html, />74k</);
+  assert.match(html, />84k</);
   assert.doesNotMatch(html, />API</);
   assert.doesNotMatch(html, /Ideas arrive quietly/);
   assert.doesNotMatch(html, /Progress Narrative|Thinking steps|codex-preview|react-loading-skeleton/i);
@@ -66,6 +76,32 @@ test("server-renders complete library documentation", async () => {
   assert.match(html, />Accessibility</);
   assert.match(html, /generative-loaders\/styles\.css/);
   assert.match(html, /React 18 or newer/);
+});
+
+test("uses matching CSP nonces for every rendered executable script", async () => {
+  const response = await render("/", "https://generativeloaders.com");
+  const csp = response.headers.get("content-security-policy");
+  const nonce = csp?.match(/'nonce-([^']+)'/)?.[1];
+  assert.ok(nonce);
+  assert.equal(response.headers.get("cache-control"), "private, no-store");
+  assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+  assert.equal(response.headers.get("x-frame-options"), "DENY");
+  assert.match(response.headers.get("strict-transport-security"), /max-age=/);
+  const html = await response.text();
+  const tags = [...html.matchAll(/<script\b[^>]*>/g)].map(match => match[0]);
+  assert.ok(tags.length > 1);
+  for (const tag of tags) {
+    if (/type="application\/(?:json|ld\+json)"/.test(tag)) continue;
+    assert.ok(tag.includes(`nonce="${nonce}"`), `Missing matching nonce: ${tag}`);
+  }
+});
+
+test("anonymous analytics stays behind sign-in with no shared caching", async () => {
+  const response = await render("/analytics", "https://generativeloaders.com");
+  assert.equal(response.status, 307);
+  assert.equal(response.headers.get("location"), "/signin-with-chatgpt?return_to=%2Fanalytics");
+  assert.equal(response.headers.get("cache-control"), "private, no-store");
+  assert.equal(response.headers.get("cloudflare-cdn-cache-control"), "no-store");
 });
 
 test("keeps the pending chat skeleton wide enough to render", async () => {

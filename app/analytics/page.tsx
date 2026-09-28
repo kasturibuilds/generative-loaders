@@ -79,7 +79,7 @@ export default async function AnalyticsPage() {
 
   return <main className="analytics-page">
     <nav className="analytics-nav shell"><Link className="brand" href="/"><BrandMark />Generative Loaders</Link><div><Link href="/">Gallery</Link><Link href="/docs">Docs</Link><a href="/signout-with-chatgpt?return_to=%2F">Sign out</a></div></nav>
-    <header className="analytics-hero shell"><div><p className="analytics-kicker">Private analytics · last 30 days</p><h1>Your site’s pulse, in one place.</h1><p>Traffic, acquisition, product interest, and npm distribution. Tracking starts with this release and excludes personal data.</p></div><span className="data-status live"><i />Live tracking</span></header>
+    <header className="analytics-hero shell"><div><p className="analytics-kicker">Private analytics · last 30 days</p><h1>Your site’s pulse, in one place.</h1><p>Traffic, acquisition, product interest, and npm distribution. Anonymous traffic estimates with limited attribution and daily visitor identifiers.</p></div><span className="data-status live"><i />Live tracking</span></header>
     <section className="analytics-summary shell" aria-label="Analytics summary">
       <article><span>Page views</span><strong>{formatNumber(totalViews)}</strong><small>Last 30 days</small></article>
       <article><span>Daily visitors</span><strong>{formatNumber(totalVisitors)}</strong><small>Privacy-friendly estimate</small></article>

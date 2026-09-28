@@ -4,6 +4,10 @@ import "generative-loaders/styles.css";
 import "./globals.css";
 import { AnalyticsBeacon } from "./components/analytics-beacon";
 
+import { headers } from "next/headers";
+
+export const dynamic = "force-dynamic";
+
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
@@ -21,6 +25,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "Generative Loaders", description: "Animated React loaders for text, inline, and image generation states.", images: ["/generative-loaders-og.png"] },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" data-theme="dark" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark')t='dark';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){}})()` }} /></head><body className={`${geistSans.variable} ${geistMono.variable}`}><AnalyticsBeacon />{children}</body></html>;
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  return <html lang="en" data-theme="dark" suppressHydrationWarning><head><script nonce={nonce} dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark')t='dark';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){}})()` }} /></head><body className={`${geistSans.variable} ${geistMono.variable}`}><AnalyticsBeacon />{children}</body></html>;
 }
