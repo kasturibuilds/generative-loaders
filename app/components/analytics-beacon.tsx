@@ -59,6 +59,7 @@ function referrerHost() {
 }
 
 function record(event: string) {
+  if (!["/", "/docs"].includes(window.location.pathname)) return;
   const body = JSON.stringify({
     event,
     ...attribution(),

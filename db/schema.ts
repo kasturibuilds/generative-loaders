@@ -17,3 +17,11 @@ export const analyticsVisitors = sqliteTable("analytics_visitors", {
   visitorId: text("visitor_id").notNull(),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 }, (table) => [primaryKey({ columns: [table.day, table.visitorId] })]);
+
+export const analyticsBudget = sqliteTable("analytics_budget", {
+  id: integer("id").primaryKey(),
+  minute: integer("minute").notNull(),
+  minuteCount: integer("minute_count").notNull(),
+  day: text("day").notNull(),
+  dayCount: integer("day_count").notNull(),
+});
