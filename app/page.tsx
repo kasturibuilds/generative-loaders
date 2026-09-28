@@ -3,6 +3,8 @@
 import { ImageLoader, InlineLoader, TextLoader, type ImageLoaderVariant, type InlineLoaderVariant, type TextLoaderVariant } from "generative-loaders";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { track } from "./lib/analytics";
+import type { AnalyticsEvent } from "./lib/analytics-events";
 import { BrandMark } from "./components/brand-mark";
 import { GitHubButton } from "./components/github-button";
 
@@ -117,12 +119,12 @@ function PlaybackControls({ paused, speed, onPauseToggle, onRestart, onSpeedChan
   </div>;
 }
 
-function CopyButton({ value, label = "Copy", className = "", ariaLabel, iconOnly = false, analyticsEvent }: { value: string; label?: string; className?: string; ariaLabel?: string; iconOnly?: boolean; analyticsEvent?: string }) {
+function CopyButton({ value, label = "Copy", className = "", ariaLabel, iconOnly = false, analyticsEvent, analyticsValue }: { value: string; label?: string; className?: string; ariaLabel?: string; iconOnly?: boolean; analyticsEvent?: AnalyticsEvent; analyticsValue?: string }) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(value);
-    if (analyticsEvent) window.dispatchEvent(new CustomEvent("gl-analytics", { detail: { event: analyticsEvent } }));
+    try { await navigator.clipboard.writeText(value); } catch { return; }
+    if (analyticsEvent) track(analyticsEvent, analyticsValue);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1300);
   }
@@ -158,7 +160,7 @@ import "generative-loaders/styles.css";
 }
 
 function CardCopyButton({ collection, id, name }: { collection: LoaderCollection; id: string; name: string }) {
-  return <CopyButton ariaLabel={`Copy ${name} code`} className="card-code-button" iconOnly value={loaderCode(collection, id)} />;
+  return <CopyButton ariaLabel={`Copy ${name} code`} className="card-code-button" iconOnly analyticsEvent="code_copy" analyticsValue={`${collection}:${id}`} value={loaderCode(collection, id)} />;
 }
 
 function ThemeIcon({ theme }: { theme: Theme }) {
@@ -274,6 +276,7 @@ function InUsePanel({ loaderColor, imageLoaderColor, speed, paused, restartKey, 
   const [imageVariant, setImageVariant] = useState<ImageLoaderVariant>("skeleton");
 
   function selectFormat(next: ContextFormat) {
+    if (format !== next) track("format_select", next);
     setFormat(next);
     onRestart();
   }
@@ -375,19 +378,19 @@ function InUsePanel({ loaderColor, imageLoaderColor, speed, paused, restartKey, 
       {(format === "button" || format === "page") && <div className="context-picker-group">
         <div className="context-picker-heading"><div><span>Activity loader</span></div></div>
         <div className="context-loader-options" role="listbox" aria-label="Activity loader style">
-          {inlineLoaders.map((loader) => <button aria-selected={inlineVariant === loader.id} className={inlineVariant === loader.id ? "selected" : ""} key={loader.id} onClick={() => { setInlineVariant(loader.id); onRestart(); }} role="option" type="button"><span aria-hidden="true" className="context-loader-swatch"><InlineLoader key={`${loader.id}-${restartKey}`} variant={loader.id} size={19} speed={speed} color={loaderColor} paused={paused} /></span><span>{loader.name}</span></button>)}
+          {inlineLoaders.map((loader) => <button aria-selected={inlineVariant === loader.id} className={inlineVariant === loader.id ? "selected" : ""} key={loader.id} onClick={() => { if (inlineVariant !== loader.id) track("variant_select", `inline:${loader.id}`); setInlineVariant(loader.id); onRestart(); }} role="option" type="button"><span aria-hidden="true" className="context-loader-swatch"><InlineLoader key={`${loader.id}-${restartKey}`} variant={loader.id} size={19} speed={speed} color={loaderColor} paused={paused} /></span><span>{loader.name}</span></button>)}
         </div>
       </div>}
       {format === "chat" && <div className="context-picker-group context-text-picker">
         <div className="context-picker-heading"><div><span>Streaming effect</span><p>Preview how streamed words enter the conversation.</p></div></div>
         <div className="context-text-options" role="listbox" aria-label="Text animation style">
-          {loaders.map((loader) => <button aria-label={loader.name} aria-selected={textVariant === loader.id} className={textVariant === loader.id ? "selected" : ""} key={loader.id} onClick={() => { setTextVariant(loader.id); onRestart(); }} role="option" type="button"><span aria-hidden="true" className="context-text-swatch"><TextLoader key={`${loader.id}-${restartKey}`} text={loader.name} variant={loader.id} color={loaderColor} speed={speed} paused={paused} /></span></button>)}
+          {loaders.map((loader) => <button aria-label={loader.name} aria-selected={textVariant === loader.id} className={textVariant === loader.id ? "selected" : ""} key={loader.id} onClick={() => { if (textVariant !== loader.id) track("variant_select", `text:${loader.id}`); setTextVariant(loader.id); onRestart(); }} role="option" type="button"><span aria-hidden="true" className="context-text-swatch"><TextLoader key={`${loader.id}-${restartKey}`} text={loader.name} variant={loader.id} color={loaderColor} speed={speed} paused={paused} /></span></button>)}
         </div>
       </div>}
       {format === "image" && <div className="context-picker-group context-image-picker">
         <div className="context-picker-heading"><div><span>Image loader</span><p>Choose the loading state used while the image is generated.</p></div></div>
         <div className="context-image-options" role="listbox" aria-label="Image loader style">
-          {imageLoaders.map((loader) => <button aria-selected={imageVariant === loader.id} className={imageVariant === loader.id ? "selected" : ""} key={loader.id} onClick={() => { setImageVariant(loader.id); onRestart(); }} role="option" type="button"><span aria-hidden="true" className="context-image-swatch"><ImageLoader variant={loader.id} size={42} radius={7} speed={speed} color={imageLoaderColor} paused={paused} /></span><span>{loader.name}</span></button>)}
+          {imageLoaders.map((loader) => <button aria-selected={imageVariant === loader.id} className={imageVariant === loader.id ? "selected" : ""} key={loader.id} onClick={() => { if (imageVariant !== loader.id) track("variant_select", `image:${loader.id}`); setImageVariant(loader.id); onRestart(); }} role="option" type="button"><span aria-hidden="true" className="context-image-swatch"><ImageLoader variant={loader.id} size={42} radius={7} speed={speed} color={imageLoaderColor} paused={paused} /></span><span>{loader.name}</span></button>)}
         </div>
       </div>}
     </div>
@@ -442,6 +445,7 @@ export default function Home() {
 
   function toggleTheme() {
     const nextTheme: Theme = theme === "light" ? "dark" : "light";
+    track("theme_select", nextTheme);
     setTheme(nextTheme);
     document.documentElement.dataset.theme = nextTheme;
     document.documentElement.style.colorScheme = nextTheme;
@@ -461,6 +465,7 @@ export default function Home() {
 
   function selectCollection(next: LoaderCollection) {
     if (next === collection) return;
+    track("collection_select", next);
     setCollection(next);
     restart();
   }
@@ -492,8 +497,8 @@ export default function Home() {
       </div>
 
       <div className="homepage-view-toggle" role="tablist" aria-label="Homepage view">
-        <button type="button" role="tab" aria-selected={view === "loaders"} className={view === "loaders" ? "active" : ""} onClick={() => setView("loaders")}>Loaders</button>
-        <button type="button" role="tab" aria-selected={view === "in-use"} className={view === "in-use" ? "active" : ""} onClick={() => { setView("in-use"); restart(); }}>In Use</button>
+        <button type="button" role="tab" aria-selected={view === "loaders"} className={view === "loaders" ? "active" : ""} onClick={() => { if (view !== "loaders") track("view_select", "loaders"); setView("loaders"); }}>Loaders</button>
+        <button type="button" role="tab" aria-selected={view === "in-use"} className={view === "in-use" ? "active" : ""} onClick={() => { if (view !== "in-use") track("view_select", "in-use"); setView("in-use"); restart(); }}>In Use</button>
       </div>
 
       <div id="loaders">

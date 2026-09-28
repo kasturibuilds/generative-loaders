@@ -30,7 +30,7 @@ describe("analytics safeguards using real SQLite", () => {
   afterEach(() => { sqlite.close(); vi.useRealTimers(); });
   const payload = { event: "page_view", path: "/", visitorId: "00000000-0000-4000-8000-000000000001" };
   const request = (body: unknown = payload, headers: Record<string, string> = {}) => new Request("https://generativeloaders.com/api/analytics/events", {
-    method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body),
+    method: "POST", headers: { "content-type": "application/json", origin: "https://generativeloaders.com", ...headers }, body: JSON.stringify(body),
   });
 
   it("records legitimate traffic and deduplicates daily visitors", async () => {

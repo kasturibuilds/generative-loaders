@@ -17,11 +17,12 @@ const runtime = new Miniflare(convertV4MiniflareOptions({
   cf: false,
   assets: { directory: fileURLToPath(new URL("../dist/client", import.meta.url)), binding: "ASSETS" },
   d1Databases: ["DB"],
+  bindings: { ANALYTICS_ALLOWED_EMAILS: "owner@example.com" },
 }));
 after(() => runtime.dispose());
 
-async function render(pathname = "/", origin = "http://localhost") {
-  return runtime.dispatchFetch(`${origin}${pathname}`, { headers: { accept: "text/html" }, redirect: "manual" });
+async function render(pathname = "/", origin = "http://localhost", headers = {}) {
+  return runtime.dispatchFetch(`${origin}${pathname}`, { headers: { accept: "text/html", ...headers }, redirect: "manual" });
 }
 
 test("redirects the generated Sites hostname to the canonical domain", async () => {
@@ -127,4 +128,40 @@ test("ships renamed metadata and social artwork", async () => {
   assert.doesNotMatch(`${layout}${packageJson}${packageManifest}`, /Progress Narrative|codex-preview|react-loading-skeleton/i);
   assert.doesNotMatch(`${packageJson}${packageManifest}`, /"name"\s*:\s*"progress-narrative"/i);
   await access(new URL("../public/generative-loaders-og.png", import.meta.url));
+});
+
+
+const analyticsOwner = { "oai-authenticated-user-id": "verified-owner", "oai-authenticated-user-email": "owner@example.com" };
+test("analytics rejects a different signed-in account", async () => {
+  const response = await render("/analytics", "https://generativeloaders.com", { ...analyticsOwner, "oai-authenticated-user-email": "other@example.com" });
+  assert.equal(response.status, 404);
+  assert.equal(response.headers.get("cache-control"), "private, no-store");
+});
+test("private analytics preserves historical data and filters seven-day reports", async () => {
+  const db = await runtime.getD1Database("DB");
+  for (const file of readdirSync("drizzle").filter(name => name.endsWith(".sql")).sort()) {
+    for (const sql of readFileSync(`drizzle/${file}`, "utf8").split("--> statement-breakpoint")) {
+      if (sql.trim()) await db.prepare(sql.trim()).run();
+    }
+  }
+  const today = new Date().toISOString().slice(0,10);
+  const earlier = new Date(Date.now()-10*86400000).toISOString().slice(0,10);
+  await db.batch([
+    db.prepare("INSERT INTO analytics_daily(day,event,count) VALUES (?, 'page_view', 3)").bind(today),
+    db.prepare("INSERT INTO analytics_daily(day,event,count) VALUES (?, 'page_view', 8)").bind(earlier),
+    db.prepare("INSERT INTO analytics_daily(day,event,count) VALUES (?, 'code_copy:text:decode', 2)").bind(today),
+  ]);
+  const response = await render("/analytics?days=7", "https://generativeloaders.com", analyticsOwner);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "private, no-store");
+  const html = await response.text();
+  assert.match(html, /Page views<\/span><strong>3<\/strong>/);
+  assert.match(html, /Code copies by variant/);
+  assert.match(html, /text \/ decode/);
+  const monthly = await render("/analytics", "https://generativeloaders.com", analyticsOwner);
+  assert.equal(monthly.status, 200);
+  assert.match(await monthly.text(), /Page views<\/span><strong>11<\/strong>/);
+  const event = await runtime.dispatchFetch("https://generativeloaders.com/api/analytics/events", { method:"POST", headers:{...analyticsOwner, "content-type":"application/json", origin:"https://generativeloaders.com"}, body:JSON.stringify({event:"github_click", path:"/"}) });
+  assert.equal(event.status,204);
+  assert.equal(await db.prepare("SELECT COUNT(*) AS count FROM analytics_daily WHERE event = 'github_click'").first("count"),0);
 });
