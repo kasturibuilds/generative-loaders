@@ -44,12 +44,6 @@ a { color:inherit; }
 .github-button small { padding-left:8px; border-left:1px solid var(--line); color:var(--muted); font-size:8px; font-weight:650; white-space:nowrap; }
 .github-button-compact { min-height:31px; padding-inline:9px; }
 .github-button-compact>span { font-size:9px; }
-.sponsor-cta { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px; margin-top:48px; margin-bottom:32px; padding-block:24px; border-top:1px solid var(--line); }
-.sponsor-cta h2 { margin:0 0 8px; font-size:18px; font-weight:550; letter-spacing:-.025em; }
-.sponsor-cta p { margin:0; color:var(--muted); font-size:12px; line-height:1.6; }
-.sponsor-button { flex-shrink:0; min-height:40px; }
-.sponsor-button svg { color:#db61a2; }
-.sponsor-button:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
 .theme-toggle { width:31px; height:31px; display:grid; place-items:center; padding:0; border:1px solid var(--line); border-radius:7px; background:var(--surface); cursor:pointer; }
 .theme-toggle:hover { background:var(--control); }
 .theme-toggle svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
