@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { BrandMark } from "./components/brand-mark";
 import { GitHubButton } from "./components/github-button";
-import { SponsorCTA } from "./components/sponsor-cta";
 
 const sampleText = "Ideas arrive quietly,\nthen become something clear.";
 
@@ -412,7 +411,7 @@ function SiteFooter() {
 
       <div className="footer-editorial-meta">
         <p>Created by Kasturi Khanke</p>
-        <nav aria-label="Footer links"><a href="https://github.com/kasturikhanke/generative-loaders">GitHub ↗</a><a href="#top">Back to top ↑</a></nav>
+        <nav aria-label="Footer links"><a href="https://github.com/sponsors/kasturikhanke">Sponsor ↗</a><a href="https://github.com/kasturikhanke/generative-loaders">GitHub ↗</a><a href="#top">Back to top ↑</a></nav>
       </div>
     </div>
   </footer>;
@@ -474,7 +473,7 @@ export default function Home() {
   return <main className="gallery-home" id="top">
     <nav className="nav shell">
       <a className="brand" href="#top"><BrandMark />Generative Loaders</a>
-      <div className="nav-links"><a href="#loaders">Loaders</a><a href="/docs">Docs</a></div>
+      <div className="nav-links"><a href="#loaders">Loaders</a><a href="/docs">Docs</a><a href="https://github.com/sponsors/kasturikhanke">Sponsor ↗</a></div>
       <div className="nav-actions">
         <GitHubButton compact />
         <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`} title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}><ThemeIcon theme={theme} /></button>
@@ -571,7 +570,6 @@ export default function Home() {
       />}
       </div>
     </div>
-    <SponsorCTA />
     <SiteFooter />
   </main>;
 }
