@@ -1,10 +1,12 @@
+import { allowedEvents } from "./lib/analytics-events";
+
 // Public, deliberately lossy analytics. No raw IP addresses or arbitrary URLs
 // are stored. Durable global budgets bound writes even if visitor IDs rotate.
 export const MAX_BODY_BYTES = 2048;
 export const EVENTS_PER_MINUTE = 120;
 export const EVENTS_PER_DAY = 10000;
 const PATHS = new Set(["/", "/docs"]);
-const EVENTS = new Set(["page_view", "install_copy", "npm_outbound"]);
+const EVENTS = allowedEvents;
 const SOURCES = new Set(["direct", "reddit", "github", "linkedin", "x", "twitter", "newsletter", "social"]);
 
 class RequestError extends Error {
@@ -55,9 +57,10 @@ function referrerCategory(value: string) {
 
 export async function recordAnalytics(request: Request, db?: D1Database): Promise<Response> {
   try {
+    if (request.headers.get("DNT") === "1" || request.headers.get("Sec-GPC") === "1" || /bot|crawler|spider|headless/i.test(request.headers.get("user-agent") ?? "")) return new Response(null, { status: 204 });
     const origin = request.headers.get("origin");
     // Origin is only a browser abuse signal, never authentication.
-    if (origin && origin !== new URL(request.url).origin) throw new RequestError(403, "Cross-origin events are not accepted");
+    if (!origin || origin !== new URL(request.url).origin || request.headers.get("sec-fetch-site") === "cross-site") throw new RequestError(403, "Cross-origin events are not accepted");
     const payload = await readPayload(request);
     const { event, path, visitorId } = payload;
     if (typeof event !== "string" || !EVENTS.has(event)) throw new RequestError(400, "Unsupported event");
@@ -104,6 +107,7 @@ export async function recordAnalytics(request: Request, db?: D1Database): Promis
     return new Response(null, { status: 204 });
   } catch (error) {
     if (error instanceof RequestError) return Response.json({ error: error.message }, { status: error.status });
+    console.error("Analytics storage write failed");
     return Response.json({ error: "Analytics event was not recorded" }, { status: 503 });
   }
 }
