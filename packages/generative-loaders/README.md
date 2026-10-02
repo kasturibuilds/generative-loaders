@@ -2,7 +2,7 @@
 
 Accessible React loading states designed for generative interfaces: sixteen animated text reveals, eighteen compact activity indicators, and twelve image-generation placeholders.
 
-[Live gallery](https://generativeloaders.com) · [Documentation](https://generativeloaders.com/docs) · [GitHub](https://github.com/kasturikhanke/generative-loaders) · [Report an issue](https://github.com/kasturikhanke/generative-loaders/issues/new/choose)
+[Live gallery](https://generativeloaders.com) · [Documentation](https://generativeloaders.com/docs) · [GitHub](https://github.com/kasturibuilds/generative-loaders) · [Report an issue](https://github.com/kasturibuilds/generative-loaders/issues/new/choose)
 
 ## Install
 

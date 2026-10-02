@@ -1,69 +1,38 @@
 {
-  "name": "generative-loaders-workspace",
+  "name": "generative-loaders-repository",
   "version": "0.1.2",
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=20.19.0"
   },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run build:package && WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
     "build:package": "npm run build --workspace generative-loaders",
-    "build": "npm run build:package && WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
-    "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
-    "typecheck": "tsc --noEmit",
+    "build": "npm run build:package",
+    "typecheck": "tsc -p packages/generative-loaders/tsconfig.build.json --noEmit",
     "test:unit": "vitest run",
-    "test": "npm run build:package && npm run typecheck && npm run test:unit && npm run build && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern packages/generative-loaders/dist",
-    "pack:package": "mkdir -p artifacts && npm pack --workspace generative-loaders --pack-destination artifacts",
-    "db:generate": "drizzle-kit generate"
-  },
-  "dependencies": {
-    "drizzle-orm": "0.45.2",
-    "framer-motion": "^13.0.0",
-    "generative-loaders": "workspace:*",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "test": "npm run build:package && npm run typecheck && npm run test:unit",
+    "lint": "eslint packages/generative-loaders --ignore-pattern dist",
+    "pack:package": "npm pack --workspace generative-loaders --dry-run"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.62.0",
-    "@cloudflare/workers-types": "5.20260928.1",
     "@eslint/js": "9.39.4",
-    "@next/eslint-plugin-next": "16.2.6",
-    "@tailwindcss/postcss": "4.2.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "@vitejs/plugin-react": "6.0.2",
-    "@vitejs/plugin-rsc": "^0.5.34",
-    "drizzle-kit": "0.31.11",
     "eslint": "9.39.4",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "16.4.0",
     "jsdom": "^26.1.0",
-    "react-server-dom-webpack": "19.2.8",
-    "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.59.3",
-    "vinext": "1.0.0",
-    "vite": "8.2.1",
-    "vitest": "^4.1.11",
-    "wrangler": "4.143.0",
-    "miniflare": "5.20260926.0-alpha"
-  },
-  "overrides": {
-    "@esbuild-kit/core-utils": {
-      "esbuild": "^0.25.12"
-    },
-    "satori": {
-      "fflate": "^0.7.5"
-    }
+    "vitest": "^4.1.11"
   }
 }
