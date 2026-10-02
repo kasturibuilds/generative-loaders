@@ -58,12 +58,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kasturikhanke/generative-loaders.git",
+    "url": "git+https://github.com/kasturibuilds/generative-loaders.git",
     "directory": "packages/generative-loaders"
   },
   "homepage": "https://generativeloaders.com",
   "bugs": {
-    "url": "https://github.com/kasturikhanke/generative-loaders/issues"
+    "url": "https://github.com/kasturibuilds/generative-loaders/issues"
   },
   "publishConfig": {
     "access": "public",

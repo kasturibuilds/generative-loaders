@@ -1,13 +1,13 @@
 # Generative Loaders
 
-[![CI](https://github.com/kasturikhanke/generative-loaders/actions/workflows/ci.yml/badge.svg)](https://github.com/kasturikhanke/generative-loaders/actions/workflows/ci.yml)
+[![CI](https://github.com/kasturibuilds/generative-loaders/actions/workflows/ci.yml/badge.svg)](https://github.com/kasturibuilds/generative-loaders/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/generative-loaders.svg)](https://www.npmjs.com/package/generative-loaders)
 [![npm downloads](https://img.shields.io/npm/dm/generative-loaders.svg)](https://www.npmjs.com/package/generative-loaders)
 [![MIT license](https://img.shields.io/badge/license-MIT-111111.svg)](./LICENSE)
 
 Accessible React loading states designed for generative interfaces: sixteen animated text reveals, eighteen compact activity indicators, and twelve image-generation placeholders.
 
-[Live gallery](https://generativeloaders.com) · [Documentation](https://generativeloaders.com/docs) · [npm](https://www.npmjs.com/package/generative-loaders) · [Report an issue](https://github.com/kasturikhanke/generative-loaders/issues/new/choose)
+[Live gallery](https://generativeloaders.com) · [Documentation](https://generativeloaders.com/docs) · [npm](https://www.npmjs.com/package/generative-loaders) · [Report an issue](https://github.com/kasturibuilds/generative-loaders/issues/new/choose)
 
 ## Install
 
@@ -120,11 +120,11 @@ All prop and variant types are exported from the package root.
 
 ## Development
 
-This repository is an npm workspace containing the package and its live gallery.
+This public repository contains the publishable npm package. The live website is maintained separately from the public package source.
 
 ```bash
 npm install
-npm run dev
+npm test
 ```
 
 Before opening a pull request, run:
@@ -135,7 +135,7 @@ npm run lint
 npm pack --workspace generative-loaders --dry-run
 ```
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full workflow. For help using the package, read the [documentation](https://generativeloaders.com/docs) or [open an issue](https://github.com/kasturikhanke/generative-loaders/issues/new/choose).
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full workflow. For help using the package, read the [documentation](https://generativeloaders.com/docs) or [open an issue](https://github.com/kasturibuilds/generative-loaders/issues/new/choose).
 
 ## License
 

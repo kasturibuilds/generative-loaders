@@ -10,16 +10,16 @@ Thanks for helping improve Generative Loaders. Bug fixes, accessibility improvem
 
 ## Local setup
 
-Generative Loaders uses npm workspaces and requires Node.js 22.13 or newer for repository development.
+Generative Loaders uses npm workspaces and requires Node.js 20.19 or newer for repository development.
 
 ```bash
-git clone https://github.com/kasturikhanke/generative-loaders.git
+git clone https://github.com/kasturibuilds/generative-loaders.git
 cd generative-loaders
 npm install
-npm run dev
+npm test
 ```
 
-The publishable package lives in `packages/generative-loaders`; the application in `app` is the gallery and documentation site.
+The publishable package lives in `packages/generative-loaders`. The website is maintained in a separate private source repository.
 
 ## Validate your change
 

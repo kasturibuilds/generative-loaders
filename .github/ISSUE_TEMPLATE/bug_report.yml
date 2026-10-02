@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible problem with the package or gallery.
+description: Report a reproducible problem with the package.
 title: "[Bug]: "
 labels: [bug]
 body:

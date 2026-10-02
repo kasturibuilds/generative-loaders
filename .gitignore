@@ -14,10 +14,13 @@
 /coverage
 *.tsbuildinfo
 
-# next.js
+# legacy website build output (website source is maintained privately)
 /.next/
 /.vinext/
+/.wrangler/
 /out/
+/outputs/
+/work/
 
 # misc
 .DS_Store
@@ -32,12 +35,6 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
-
 /dist/
-/.wrangler/
-/outputs/
-/work/
 /artifacts/
 /packages/*/dist/
