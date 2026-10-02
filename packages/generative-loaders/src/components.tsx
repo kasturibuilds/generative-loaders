@@ -396,7 +396,10 @@ const resolutionCells = Array.from({ length: 36 }, (_, index) => {
   return { index, distance: Math.abs(x - 2.5) + Math.abs(y - 2.5), tone: 28 + ((x * 13 + y * 9) % 34) };
 });
 
-const cssDecimal = (value: number) => value.toFixed(3);
+const cssDecimal = (value: number) => {
+  const formatted = value.toFixed(3);
+  return formatted === "-0.000" ? "0.000" : formatted;
+};
 
 const coalesceParticles = Array.from({ length: 24 }, (_, index) => {
   const angle = index * 137.508 * Math.PI / 180;
@@ -434,7 +437,7 @@ function ImageVisual({ variant }: Pick<ImageLoaderProps, "variant">) {
   if (variant === "scan") return <span className="iml-scan"><i /><b /><em /></span>;
   if (variant === "pixel-grid") return <span className="iml-pixel-grid">{imageTiles.map(({ index, x, y }) => <i key={index} style={{ "--iml-x": x, "--iml-y": y, "--iml-delay": `${cssDecimal((x + y - 6) * .09)}s` } as CSSProperties} />)}</span>;
   if (variant === "resolution") return <span className="iml-resolution">{resolutionCells.map(({ index, distance, tone }) => <i key={index} style={{ "--iml-delay": `${cssDecimal((distance - 6) * .055)}s`, "--iml-tone": `${tone}%` } as CSSProperties} />)}</span>;
-  if (variant === "coalesce") return <span className="iml-coalesce">{coalesceParticles.map(({ index, startX, startY, midX, midY, endX, endY, size, delay, opacity }) => <i key={index} style={{ "--iml-start-x": `${startX}%`, "--iml-start-y": `${startY}%`, "--iml-mid-x": `${midX}%`, "--iml-mid-y": `${midY}%`, "--iml-end-x": `${endX}%`, "--iml-end-y": `${endY}%`, "--iml-particle-size": `${size}%`, "--iml-delay": `calc(var(--iml-duration) * ${delay})`, "--iml-particle-opacity": opacity } as CSSProperties} />)}<b /></span>;
+  if (variant === "coalesce") return <span className="iml-coalesce">{coalesceParticles.map(({ index, startX, startY, midX, midY, endX, endY, size, delay, opacity }) => <i key={index} style={{ "--iml-start-x": `${startX}%`, "--iml-start-y": `${startY}%`, "--iml-mid-x": `${midX}%`, "--iml-mid-y": `${midY}%`, "--iml-end-x": `${endX}%`, "--iml-end-y": `${endY}%`, "--iml-particle-size": `${size}%`, "--iml-delay": `calc(var(--iml-duration) * ${delay})`, "--iml-particle-opacity": `${opacity}` } as CSSProperties} />)}<b /></span>;
   if (variant === "diffusion") return <span className="iml-diffusion">{diffusionParticles.map(({ index, x, y, size, delay }) => <i key={index} style={{ "--iml-x": `${x}%`, "--iml-y": `${y}%`, "--iml-dot-size": `${size}%`, "--iml-delay": `calc(var(--iml-duration) * ${delay})` } as CSSProperties} />)}</span>;
   if (variant === "raster") return <span className="iml-raster">{Array.from({ length: 8 }, (_, index) => <i key={index} style={{ "--iml-i": index, "--iml-delay": `calc(var(--iml-duration) * ${cssDecimal(index * -.035)})` } as CSSProperties} />)}</span>;
   if (variant === "bloom") return <span className="iml-bloom"><i /><b /><em /></span>;
