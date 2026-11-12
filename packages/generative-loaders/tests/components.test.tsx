@@ -89,6 +89,35 @@ describe("ImageLoader", () => {
     }
   });
 
+  it("produces deterministic output and string equality between repeated generations for coalesce", () => {
+    const firstRender = renderToString(<ImageLoader variant="coalesce" />);
+    const secondRender = renderToString(<ImageLoader variant="coalesce" />);
+
+    expect(firstRender).toBe(secondRender);
+    expect(firstRender).toContain("--iml-start-x:13.869%");
+    expect(firstRender).toContain("--iml-mid-x:34.596%");
+    expect(firstRender).toContain("--iml-particle-opacity:0.540");
+  });
+
+  it("hydrates coalesce markup without hydration warnings", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+
+    const ssrHtml = renderToString(<ImageLoader variant="coalesce" />);
+    container.innerHTML = ssrHtml;
+
+    const { unmount } = render(<ImageLoader variant="coalesce" />, {
+      container,
+      hydrate: true,
+    });
+
+    unmount();
+    container.remove();
+    expect(consoleError).not.toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+
   it("gives the extended image studies distinct visual structures", () => {
     const { container, rerender } = render(<ImageLoader variant="diffusion" />);
     expect(container.querySelectorAll(".iml-diffusion i")).toHaveLength(28);
